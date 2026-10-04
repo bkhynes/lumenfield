@@ -1,0 +1,107 @@
+:root {
+  --ink: #071410;
+  --field: #10241e;
+  --line: rgba(214, 255, 74, 0.22);
+  --lime: #d6ff4a;
+  --mint: #8ee0c8;
+  --sand: #f4f0e6;
+  --clay: #ff6d5c;
+  --amber: #ffc14d;
+  --mute: #9bb0a8;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: radial-gradient(1000px 480px at 80% -10%, #1c3a30, transparent 60%), var(--ink);
+  color: var(--sand);
+  font-family: Outfit, sans-serif;
+  font-weight: 340;
+  line-height: 1.5;
+}
+.glow {
+  pointer-events: none;
+  position: fixed;
+  inset: auto auto 10% -10%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(214,255,74,.16), transparent 70%);
+}
+.top, .hero, .board, .why, .brief, footer {
+  width: min(1120px, calc(100% - 32px));
+  margin-inline: auto;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 0;
+}
+.brand { display: flex; gap: 12px; align-items: center; }
+.brand strong { display: block; font-family: Fraunces, serif; font-size: 1.15rem; }
+.brand em { color: var(--mute); font-style: normal; font-size: .82rem; }
+.mark {
+  width: 42px; height: 42px; display: grid; place-items: center;
+  background: var(--lime); color: var(--ink); font-weight: 600; border-radius: 14px;
+}
+nav a { color: var(--sand); text-decoration: none; margin-left: 18px; font-size: .92rem; }
+.hero { padding: 28px 0 10px; }
+.kicker { letter-spacing: .14em; text-transform: uppercase; color: var(--lime); font-size: .72rem; }
+h1 {
+  font-family: Fraunces, serif;
+  font-weight: 500;
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  line-height: .95;
+  margin: 8px 0 16px;
+}
+.lede { max-width: 62ch; color: var(--mint); font-size: 1.05rem; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 28px 0; }
+.stat {
+  background: rgba(16, 36, 30, .8);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px 18px;
+}
+.stat b { display: block; font-family: Fraunces, serif; font-size: 1.8rem; color: var(--lime); }
+.stat span { color: var(--mute); font-size: .85rem; }
+.section-head, .brief form { display: flex; justify-content: space-between; gap: 16px; align-items: end; }
+h2 { font-family: Fraunces, serif; font-weight: 500; font-size: 2rem; margin: 0 0 8px; }
+select, input, button {
+  font: inherit; color: var(--sand); background: var(--field);
+  border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
+}
+button { background: var(--lime); color: var(--ink); font-weight: 600; cursor: pointer; }
+.layout { display: grid; grid-template-columns: 320px 1fr; gap: 16px; }
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.list button {
+  width: 100%; text-align: left; background: rgba(16,36,30,.72); color: var(--sand); font-weight: 400;
+}
+.list button.on { outline: 1px solid var(--lime); }
+.list small { display: block; color: var(--mute); }
+.rel { float: right; color: var(--lime); font-variant-numeric: tabular-nums; }
+.detail {
+  background: linear-gradient(180deg, rgba(16,36,30,.9), rgba(7,20,16,.9));
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px;
+  min-height: 480px;
+}
+.detail h3 { font-family: Fraunces, serif; font-size: 1.7rem; margin: 6px 0; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 16px; }
+.pills span { border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: .78rem; color: var(--mint); }
+.client-line { font-size: 1.15rem; color: var(--sand); }
+.why, .brief { margin: 42px auto; display: grid; gap: 18px; }
+.why { grid-template-columns: 1.3fr .7fr; align-items: start; }
+.why ol { margin: 0; padding-left: 18px; }
+.why li { margin: 10px 0; }
+pre {
+  background: #06110e; color: var(--lime); border-radius: 14px; padding: 14px;
+  overflow: auto; font-size: .78rem; line-height: 1.45;
+}
+.fine, footer { color: var(--mute); font-size: .82rem; }
+footer { display: flex; justify-content: space-between; padding: 28px 0 40px; }
+label { display: grid; gap: 6px; font-size: .85rem; color: var(--mute); }
+@media (max-width: 800px) {
+  .layout, .why, .stats, .section-head, .brief form, footer { grid-template-columns: 1fr; display: grid; }
+  nav { display: none; }
+}

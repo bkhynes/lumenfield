@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lumenfield — adaptive exposure intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,640&family=Outfit:wght@340;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+  <div class="glow"></div>
+  <header class="top">
+    <div class="brand">
+      <span class="mark">LF</span>
+      <div>
+        <strong>Lumenfield</strong>
+        <em>Adaptive exposure intelligence</em>
+      </div>
+    </div>
+    <nav>
+      <a href="#board">Board</a>
+      <a href="#why">Why it evolves</a>
+      <a href="#brief">Client brief</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <p class="kicker">Client service · authorised assessment · {{ today }}</p>
+    <h1>Show the concern.<br />Leave the fix.</h1>
+    <p class="lede">A living board of exploited exposure classes. Each item carries its ongoing relevance, a plain-language line for the client, and a defensive check — never an attack script. New tests arrive from the public KEV feed and wait for an analyst.</p>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section id="board" class="board">
+    <div class="section-head">
+      <h2>Exposure board</h2>
+      <label>Voice
+        <select id="voice">
+          <option value="client">Client</option>
+          <option value="technical">Technical</option>
+        </select>
+      </label>
+    </div>
+    <div class="layout">
+      <ul class="list" id="list"></ul>
+      <article class="detail" id="detail"></article>
+    </div>
+  </section>
+
+  <section id="why" class="why">
+    <div>
+      <p class="kicker">The argument in the leave-behind</p>
+      <h2>A test that cannot learn is a photograph.</h2>
+      <p>Edge managers, mail gateways, VPNs, and support portals are re-exposed every patch cycle. CISA’s Known Exploited Vulnerabilities catalog is the public queue. Lumenfield matches new rows to tagged assets, opens an analyst task, and only then prints the item. Relevance stays high until a fixed build is attested on every node.</p>
+    </div>
+    <ol>
+      <li><b>Ingest.</b> Weekly read of the public KEV JSON. Metadata only.</li>
+      <li><b>Match.</b> Vendor and role tags on the client estate.</li>
+      <li><b>Confirm.</b> An analyst writes the client line and attaches a defensive check.</li>
+      <li><b>Brief.</b> Visual PDF with concern, relevance, and the fix.</li>
+    </ol>
+  </section>
+
+  <section id="brief" class="brief">
+    <h2>Print the brief</h2>
+    <form id="brief-form">
+      <label>Client<input name="client" value="Northwind Partners" required /></label>
+      <label>Prepared by<input name="prepared" value="Lumenfield · Swift Programming" required /></label>
+      <button type="submit">Download visual PDF</button>
+    </form>
+    <p class="fine">The PDF is the artifact clients keep. It argues for a living test programme and lists only authorised remediation.</p>
+  </section>
+
+  <footer>
+    <span>Lumenfield</span>
+    <span>Authorised use only · no exploit payloads</span>
+  </footer>
+  <script id="catalog" type="application/json">{{ findings | tojson }}</script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
