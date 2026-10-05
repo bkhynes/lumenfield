@@ -101,7 +101,15 @@ pre {
 .fine, footer { color: var(--mute); font-size: .82rem; }
 footer { display: flex; justify-content: space-between; padding: 28px 0 40px; }
 label { display: grid; gap: 6px; font-size: .85rem; color: var(--mute); }
-.scan { margin: 12px auto 36px; }
+.devices { margin: 8px auto 28px; }
+.device-list { display: grid; gap: 8px; }
+.device {
+  display: grid; grid-template-columns: 1.1fr 1fr .7fr; gap: 8px;
+  border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px;
+  background: rgba(16, 36, 30, .72);
+}
+.device b { font-family: Fraunces, serif; }
+.device span { color: var(--mute); font-size: .82rem; }
 .scan form { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 16px; }
 .check { display: flex; gap: 8px; align-items: center; color: var(--sand); }
 .stage { display: grid; justify-items: center; gap: 10px; padding: 20px 0 8px; color: var(--mint); }
@@ -146,6 +154,13 @@ label { display: grid; gap: 6px; font-size: .85rem; color: var(--mute); }
 }
 @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .hit { border-left: 3px solid var(--clay); padding-left: 12px; margin: 12px 0; }
+.hit button { background: transparent; color: var(--sand); padding: 0; font-weight: 600; }
+.inventory { margin-top: 14px; }
+.inventory summary { cursor: pointer; color: var(--mint); }
+.inventory li { color: var(--mute); font-size: .85rem; }
+@media (prefers-reduced-motion: reduce) {
+  .radar i, .orbit, .mote, .seal { animation: none; }
+}
 @media (max-width: 800px) {
   .layout, .why, .stats, .section-head, .brief form, .scan form, footer { grid-template-columns: 1fr; display: grid; }
   nav { display: none; }

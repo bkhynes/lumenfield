@@ -39,7 +39,7 @@ def _wrap(c: canvas.Canvas, text: str, x: float, y: float, width: float, size: f
     return y
 
 
-def build_brief(path: Path, client: str, prepared: str, findings: list[dict]) -> Path:
+def build_brief(path: Path, client: str, prepared: str, findings: list[dict], scan: dict | None = None) -> Path:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     c = canvas.Canvas(str(path), pagesize=A4)
@@ -87,6 +87,14 @@ def build_brief(path: Path, client: str, prepared: str, findings: list[dict]) ->
         SAND,
     )
     y -= 6 * mm
+    if scan:
+        if scan.get("clear"):
+            line = f"Latest scan of {scan.get('cidr')} at {scan.get('scanned_at')}: no watched product identified across {scan.get('hosts_considered')} hosts."
+        else:
+            names = ", ".join(f"{hit.get('host')}:{hit.get('port')} {hit.get('cve')}" for hit in scan.get("findings", [])[:4])
+            line = f"Latest scan of {scan.get('cidr')} at {scan.get('scanned_at')} matched {names}."
+        y = _wrap(c, line, 16 * mm, y, w - 32 * mm, 10, 13, LIME)
+        y -= 4 * mm
     avg = round(sum(f["relevance"] for f in findings) / max(len(findings), 1))
     kev = sum(1 for f in findings if f["cve"].startswith("CVE"))
     boxes = [

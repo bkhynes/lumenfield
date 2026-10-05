@@ -29,4 +29,12 @@ No proof-of-concept exploits, payloads, or attack traffic. Checks are local post
 - `catalog.py` — current board
 - `report_pdf.py` — client brief
 - `templates/` `static/` — briefing UI
-- `scanner.py` — private-range banner scan
+## Devices
+
+The connected-device widget counts neighbours and hosts that answered the last authorised scan. MySQL stores first seen, last seen, times seen, and each sighting.
+
+```bash
+docker compose up -d
+```
+
+The widget uses local MySQL as `root` with an empty password, and creates the `lumenfield` database on first scan. Override with `MYSQL_USER` and `MYSQL_PASSWORD` if that account is locked down. A blank root password is only suitable on a machine that is not reachable from the network.

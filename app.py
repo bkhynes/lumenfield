@@ -15,12 +15,14 @@ from flask import Flask, abort, jsonify, render_template, request, send_file
 
 from catalog import CATALOG
 from report_pdf import build_brief
+from inventory import record, summary
 from scanner import local_network, scan
 
 ROOT = Path(__file__).resolve().parent
 APP = Flask(__name__, template_folder=str(ROOT / "templates"), static_folder=str(ROOT / "static"))
 WATCH = ROOT / "data" / "watchlist.json"
 LAST = ROOT / "data" / "last_scan.json"
+HISTORY = ROOT / "data" / "scan_history.json"
 
 
 def load_watch() -> dict:
@@ -56,15 +58,63 @@ def report():
     chosen = [item for item in CATALOG if item["id"] in selected]
     if not chosen:
         chosen = CATALOG
+    scan_note = last_scan() if body.get("include_scan") else None
     out = ROOT / "briefs" / f"{date.today().isoformat()}-lumenfield-brief.pdf"
     out.parent.mkdir(exist_ok=True)
-    build_brief(out, client=client, prepared=prepared, findings=chosen)
+    build_brief(out, client=client, prepared=prepared, findings=chosen, scan=scan_note)
     return send_file(out, as_attachment=True, download_name=out.name)
 
 
 @APP.route("/api/network")
 def network():
     return jsonify(local_network())
+
+
+def load_history() -> list:
+    if not HISTORY.exists():
+        return []
+    return json.loads(HISTORY.read_text())
+
+
+def remember(result: dict) -> dict:
+    previous = load_history()[:1]
+    prior_keys = {f"{hit['host']}:{hit['port']}:{hit['id']}" for hit in (previous[0].get("findings") or [])} if previous else set()
+    keys = {f"{hit['host']}:{hit['port']}:{hit['id']}" for hit in result.get("findings", [])}
+    result["delta"] = {
+        "new": sorted(keys - prior_keys),
+        "cleared": sorted(prior_keys - keys),
+        "compared_with": previous[0].get("scanned_at") if previous else None,
+    }
+    receipt = {
+        "scanned_at": result.get("scanned_at"),
+        "cidr": result.get("cidr"),
+        "clear": result.get("clear"),
+        "hosts_considered": result.get("hosts_considered"),
+        "services": len(result.get("observations") or []),
+        "matches": len(result.get("findings") or []),
+        "findings": result.get("findings") or [],
+    }
+    history = [receipt, *load_history()][:8]
+    HISTORY.parent.mkdir(exist_ok=True)
+    HISTORY.write_text(json.dumps(history, indent=2))
+    LAST.write_text(json.dumps(result, indent=2))
+    return result
+
+
+@APP.route("/api/history")
+def history():
+    return jsonify(load_history())
+
+
+def last_scan() -> dict | None:
+    if not LAST.exists():
+        return None
+    return json.loads(LAST.read_text())
+
+
+@APP.route("/api/scan", methods=["GET"])
+def saved_scan():
+    return jsonify(last_scan() or {})
 
 
 @APP.route("/api/scan", methods=["POST"])
@@ -76,8 +126,20 @@ def run_scan():
     except PermissionError as exc:
         return jsonify({"error": str(exc)}), 403
     LAST.parent.mkdir(exist_ok=True)
-    LAST.write_text(json.dumps(result, indent=2))
+    result = remember(result)
+    try:
+        result["devices"] = record(result)
+    except Exception as exc:
+        result["devices"] = {"ok": False, "error": "MySQL is not reachable. Start docker compose up, then scan again."}
     return jsonify(result)
+
+
+@APP.route("/api/devices")
+def devices():
+    try:
+        return jsonify(summary())
+    except Exception:
+        return jsonify({"ok": False, "connected_now": 0, "known": 0, "devices": [], "error": "MySQL is not reachable yet."})
 
 
 @APP.route("/api/intake", methods=["POST"])
