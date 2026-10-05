@@ -39,7 +39,21 @@ body {
 .pill, .kicker {
   letter-spacing: .08em; text-transform: uppercase; color: var(--lime); font-size: .68rem;
 }
-.pill { border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; }
+.topnav {
+  position: sticky; top: 0; z-index: 5;
+  width: min(720px, calc(100% - 28px)); margin: 0 auto 8px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  padding: 6px; border-radius: 16px;
+  background: rgba(12, 23, 20, .92); border: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+.topnav button {
+  background: transparent; color: var(--mute); min-height: 52px;
+  display: grid; justify-items: center; gap: 2px; padding: 6px 4px;
+}
+.topnav button.on { background: var(--lime); color: var(--ink); }
+.topnav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.topnav span { font-size: .68rem; letter-spacing: .04em; text-transform: uppercase; }
 .panel { display: none; padding-top: 8px; }
 .panel.on { display: block; }
 h1, h2, h3 { font-family: Fraunces, serif; font-weight: 560; letter-spacing: -0.03em; }

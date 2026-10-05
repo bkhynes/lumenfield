@@ -227,13 +227,13 @@ function hitList(body) {
     `<p class="fine">${deltaLine(body)} Open a match to brief it.</p>${inventory(body)}${nseBlock(body)}`;
 }
 
-document.querySelectorAll(".tabbar button").forEach(button => {
+document.querySelectorAll("[data-tab]").forEach(button => {
   button.addEventListener("click", () => showTab(button.dataset.tab));
 });
 
 function showTab(id) {
   document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("on", panel.id === id));
-  document.querySelectorAll(".tabbar button").forEach(item => item.classList.toggle("on", item.dataset.tab === id));
+  document.querySelectorAll("[data-tab]").forEach(item => item.classList.toggle("on", item.dataset.tab === id));
   window.scrollTo({top: 0, behavior: "smooth"});
 }
 
