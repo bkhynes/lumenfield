@@ -37,4 +37,4 @@ The connected-device widget counts neighbours and hosts that answered the last a
 docker compose up -d
 ```
 
-Defaults are `MYSQL_HOST=127.0.0.1`, user `lumenfield`, password `lumenfield`, database `lumenfield`. Change them before any client network is recorded. History stays on the private range you confirmed.
+The widget uses local MySQL as `root` with an empty password, and creates the `lumenfield` database on first scan. Override with `MYSQL_USER` and `MYSQL_PASSWORD` if that account is locked down. A blank root password is only suitable on a machine that is not reachable from the network.

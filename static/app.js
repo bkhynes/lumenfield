@@ -105,7 +105,7 @@ function paintDevices(body) {
   const list = document.getElementById("device-list");
   if (!body.ok) {
     count.textContent = body.error || "MySQL is not connected.";
-    list.innerHTML = "<p class='fine'>Start MySQL with docker compose up -d in the project folder. The widget then keeps first seen, last seen, and how often each address answers.</p>";
+    list.innerHTML = "<p class='fine'>The app expects MySQL on 127.0.0.1 as root with an empty password, and will create the lumenfield database itself.</p>";
     return;
   }
   count.textContent = `${body.connected_now} seen in the last 15 minutes · ${body.known} known`;

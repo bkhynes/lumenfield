@@ -33,17 +33,61 @@ OUIS = {
 }
 
 
-def mysql_config() -> dict:
-    return {
+def mysql_config(database: str | None = None) -> dict:
+    config = {
         "host": os.environ.get("MYSQL_HOST", "127.0.0.1"),
         "port": int(os.environ.get("MYSQL_PORT", "3306")),
-        "user": os.environ.get("MYSQL_USER", "lumenfield"),
-        "password": os.environ.get("MYSQL_PASSWORD", "lumenfield"),
-        "database": os.environ.get("MYSQL_DATABASE", "lumenfield"),
+        "user": os.environ.get("MYSQL_USER", "root"),
+        "password": os.environ.get("MYSQL_PASSWORD", ""),
         "charset": "utf8mb4",
         "autocommit": True,
         "connect_timeout": 3,
     }
+    config["database"] = database if database is not None else os.environ.get("MYSQL_DATABASE", "lumenfield")
+    return config
+
+
+def ensure_schema() -> None:
+    bootstrap = mysql_config(database=None)
+    bootstrap.pop("database", None)
+    conn = pymysql.connect(**bootstrap)
+    try:
+        with conn.cursor() as cur:
+            cur.execute("CREATE DATABASE IF NOT EXISTS lumenfield")
+            cur.execute("USE lumenfield")
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS devices (
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  ip VARCHAR(45) NOT NULL,
+                  mac VARCHAR(17) NULL,
+                  hostname VARCHAR(255) NULL,
+                  vendor VARCHAR(80) NULL,
+                  role_hint VARCHAR(80) NULL,
+                  first_seen DATETIME NOT NULL,
+                  last_seen DATETIME NOT NULL,
+                  times_seen INT NOT NULL DEFAULT 1,
+                  last_ports VARCHAR(160) NULL,
+                  last_evidence VARCHAR(255) NULL,
+                  UNIQUE KEY uniq_ip (ip)
+                )
+                """
+            )
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS sightings (
+                  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  device_id BIGINT NOT NULL,
+                  seen_at DATETIME NOT NULL,
+                  neigh_state VARCHAR(24) NULL,
+                  ports VARCHAR(160) NULL,
+                  evidence VARCHAR(255) NULL,
+                  KEY device_seen (device_id, seen_at)
+                )
+                """
+            )
+    finally:
+        conn.close()
 
 
 def neighbours() -> list[dict]:
@@ -68,6 +112,7 @@ def neighbours() -> list[dict]:
 
 
 def record(scan: dict) -> dict:
+    ensure_schema()
     online = _merge(scan)
     conn = pymysql.connect(**mysql_config())
     try:
@@ -80,6 +125,8 @@ def record(scan: dict) -> dict:
 
 
 def summary(conn=None) -> dict:
+    if conn is None:
+        ensure_schema()
     own = conn is None
     if own:
         conn = pymysql.connect(**mysql_config())
