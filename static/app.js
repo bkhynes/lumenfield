@@ -100,6 +100,23 @@ const scanBtn = document.getElementById("scan-btn");
 const savedClient = localStorage.getItem("lf-client");
 if (savedClient) document.querySelector("[name=client]").value = savedClient;
 
+function paintDevices(body) {
+  const count = document.getElementById("device-count");
+  const list = document.getElementById("device-list");
+  if (!body.ok) {
+    count.textContent = body.error || "MySQL is not connected.";
+    list.innerHTML = "<p class='fine'>Start MySQL with docker compose up -d in the project folder. The widget then keeps first seen, last seen, and how often each address answers.</p>";
+    return;
+  }
+  count.textContent = `${body.connected_now} seen in the last 15 minutes · ${body.known} known`;
+  list.innerHTML = body.devices.map(device => `<article class="device">
+    <div><b>${device.hostname || device.ip}</b><span>${device.ip} · ${device.mac || "no mac"} · ${device.vendor || "vendor unknown"}</span></div>
+    <div><span>${device.role || "unclassified"} · ports ${device.ports || "none"}</span><span>${device.evidence || "no banner"}</span></div>
+    <div><span>first ${device.first_seen}</span><span>last ${device.last_seen} · seen ${device.times_seen} times</span></div>
+  </article>`).join("") || "<p class='fine'>No devices stored yet. Run a scan on a network you are authorised to assess.</p>";
+}
+
+fetch("/api/devices").then(r => r.json()).then(paintDevices);
 fetch("/api/network").then(r => r.json()).then(net => {
   document.getElementById("cidr").value = net.cidr;
   document.getElementById("lan").textContent = net.private
@@ -134,6 +151,7 @@ document.getElementById("scan-form").addEventListener("submit", async (event) =>
     return;
   }
   showScan(body);
+  if (body.devices) paintDevices(body.devices.ok ? body.devices : {ok: false, error: body.devices.error});
 });
 
 function dueLabel(due) {

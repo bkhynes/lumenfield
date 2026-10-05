@@ -15,6 +15,7 @@ from flask import Flask, abort, jsonify, render_template, request, send_file
 
 from catalog import CATALOG
 from report_pdf import build_brief
+from inventory import record, summary
 from scanner import local_network, scan
 
 ROOT = Path(__file__).resolve().parent
@@ -125,7 +126,20 @@ def run_scan():
     except PermissionError as exc:
         return jsonify({"error": str(exc)}), 403
     LAST.parent.mkdir(exist_ok=True)
-    return jsonify(remember(result))
+    result = remember(result)
+    try:
+        result["devices"] = record(result)
+    except Exception as exc:
+        result["devices"] = {"ok": False, "error": "MySQL is not reachable. Start docker compose up, then scan again."}
+    return jsonify(result)
+
+
+@APP.route("/api/devices")
+def devices():
+    try:
+        return jsonify(summary())
+    except Exception:
+        return jsonify({"ok": False, "connected_now": 0, "known": 0, "devices": [], "error": "MySQL is not reachable yet."})
 
 
 @APP.route("/api/intake", methods=["POST"])

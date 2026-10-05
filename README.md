@@ -29,4 +29,12 @@ No proof-of-concept exploits, payloads, or attack traffic. Checks are local post
 - `catalog.py` — current board
 - `report_pdf.py` — client brief
 - `templates/` `static/` — briefing UI
-- `scanner.py` — private-range banner scan
+## Devices
+
+The connected-device widget counts neighbours and hosts that answered the last authorised scan. MySQL stores first seen, last seen, times seen, and each sighting.
+
+```bash
+docker compose up -d
+```
+
+Defaults are `MYSQL_HOST=127.0.0.1`, user `lumenfield`, password `lumenfield`, database `lumenfield`. Change them before any client network is recorded. History stays on the private range you confirmed.
