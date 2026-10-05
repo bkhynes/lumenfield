@@ -181,6 +181,16 @@ function inventory(body) {
   </details>`;
 }
 
+function nseBlock(body) {
+  const nse = body.nse;
+  if (!nse) return "";
+  if (!nse.available) return `<p class="fine">${nse.reason}</p>`;
+  if (!nse.notes?.length) return `<p class="fine">Safe NSE pass finished. No script notes. ${nse.reason || ""}</p>`;
+  return `<details class="inventory" open><summary>Safe script notes</summary><ul>${
+    nse.notes.map(note => `<li>${note.host} · ${note.script} — ${note.output}</li>`).join("")
+  }</ul></details>`;
+}
+
 function showScan(body) {
   last = body;
   result.innerHTML = body.clear ? clearField(body) : hitList(body);
@@ -201,7 +211,7 @@ function clearField(body) {
       <p>No watched product on ${body.cidr}. ${body.hosts_considered} hosts, ${seen} services answered, none matched the board.</p>
       <p class="fine">${deltaLine(body)} Saved ${body.scanned_at}.</p>
     </div>
-  </div>${inventory(body)}`;
+  </div>${inventory(body)}${nseBlock(body)}`;
 }
 
 function hitList(body) {
@@ -212,7 +222,7 @@ function hitList(body) {
       <p>${hit.client_line}</p>
       <p class="fine">${hit.evidence}</p>
     </article>`).join("") +
-    `<p class="fine">${deltaLine(body)} Open a match to brief it.</p>${inventory(body)}`;
+    `<p class="fine">${deltaLine(body)} Open a match to brief it.</p>${inventory(body)}${nseBlock(body)}`;
 }
 
 result.addEventListener("click", (event) => {

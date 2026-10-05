@@ -37,4 +37,4 @@ The connected-device widget counts neighbours and hosts that answered the last a
 docker compose up -d
 ```
 
-The widget uses local MySQL as `root` with an empty password, and creates the `lumenfield` database on first scan. Override with `MYSQL_USER` and `MYSQL_PASSWORD` if that account is locked down. A blank root password is only suitable on a machine that is not reachable from the network.
+A scan of hosts that already answered can run Nmap's safe category only. Exploit, brute, denial-of-service, fuzzer, and malware scripts are excluded. Install Nmap with `brew install nmap` on the Mac.

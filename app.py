@@ -16,6 +16,7 @@ from flask import Flask, abort, jsonify, render_template, request, send_file
 from catalog import CATALOG
 from report_pdf import build_brief
 from inventory import record, summary
+from nse import safe_pass
 from scanner import local_network, scan
 
 ROOT = Path(__file__).resolve().parent
@@ -127,6 +128,7 @@ def run_scan():
         return jsonify({"error": str(exc)}), 403
     LAST.parent.mkdir(exist_ok=True)
     result = remember(result)
+    result["nse"] = safe_pass(result.get("observations") or [])
     try:
         result["devices"] = record(result)
     except Exception as exc:
