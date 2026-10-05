@@ -2,7 +2,9 @@
 
 Adaptive exposure intelligence for client security briefs.
 
-Lumenfield is a service console, not an exploit kit. It keeps a living board of currently relevant exposure classes, explains why each one still matters, ships a defensive check or hardening pattern, and prints a visual PDF a client can keep.
+Lumenfield reads the connected private network, matches service banners to exploited product classes, and prints a client brief. A clear scan plays the field animation. A match gets the client line and the fix.
+
+The scan is banner and certificate-name matching on loopback and private ranges only, after the operator confirms authorisation. It does not send exploit traffic.
 
 New tests are adopted from the public [CISA Known Exploited Vulnerabilities](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) feed. Automation files the lead. An analyst confirms it before it reaches the client.
 
@@ -27,4 +29,4 @@ No proof-of-concept exploits, payloads, or attack traffic. Checks are local post
 - `catalog.py` — current board
 - `report_pdf.py` — client brief
 - `templates/` `static/` — briefing UI
-- `ingest/kev_sync.py` — public KEV watermark
+- `scanner.py` — private-range banner scan

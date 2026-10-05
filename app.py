@@ -15,6 +15,7 @@ from flask import Flask, abort, jsonify, render_template, request, send_file
 
 from catalog import CATALOG
 from report_pdf import build_brief
+from scanner import local_network, scan
 
 ROOT = Path(__file__).resolve().parent
 APP = Flask(__name__, template_folder=str(ROOT / "templates"), static_folder=str(ROOT / "static"))
@@ -58,6 +59,21 @@ def report():
     out.parent.mkdir(exist_ok=True)
     build_brief(out, client=client, prepared=prepared, findings=chosen)
     return send_file(out, as_attachment=True, download_name=out.name)
+
+
+@APP.route("/api/network")
+def network():
+    return jsonify(local_network())
+
+
+@APP.route("/api/scan", methods=["POST"])
+def run_scan():
+    body = request.get_json(silent=True) or {}
+    cidr = (body.get("cidr") or local_network()["cidr"]).strip()
+    try:
+        return jsonify(scan(cidr, confirmed=bool(body.get("confirmed"))))
+    except PermissionError as exc:
+        return jsonify({"error": str(exc)}), 403
 
 
 @APP.route("/api/intake", methods=["POST"])

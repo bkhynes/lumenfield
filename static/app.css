@@ -101,7 +101,55 @@ pre {
 .fine, footer { color: var(--mute); font-size: .82rem; }
 footer { display: flex; justify-content: space-between; padding: 28px 0 40px; }
 label { display: grid; gap: 6px; font-size: .85rem; color: var(--mute); }
+.scan { margin: 12px auto 36px; }
+.scan form { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 16px; }
+.check { display: flex; gap: 8px; align-items: center; color: var(--sand); }
+.stage { display: grid; justify-items: center; gap: 10px; padding: 20px 0 8px; color: var(--mint); }
+.radar {
+  width: 92px; height: 92px; border-radius: 50%;
+  border: 1px solid var(--line); position: relative; overflow: hidden;
+  background: radial-gradient(circle, rgba(214,255,74,.18), transparent 62%);
+}
+.radar i {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0 72%, rgba(214,255,74,.7) 100%);
+  animation: sweep 1.4s linear infinite;
+}
+@keyframes sweep { to { transform: rotate(360deg); } }
+.clear-field {
+  position: relative; overflow: hidden; border-radius: 28px;
+  border: 1px solid var(--line); min-height: 320px;
+  display: grid; place-items: center; text-align: center; padding: 36px 20px;
+  background: radial-gradient(circle at 50% 40%, rgba(214,255,74,.18), transparent 55%), #0c1c17;
+}
+.clear-field h3 { font-family: Fraunces, serif; font-size: clamp(2rem, 4vw, 3.2rem); margin: 8px 0; }
+.mote, .orbit {
+  position: absolute; border-radius: 50%; pointer-events: none;
+}
+.mote {
+  width: 8px; height: 8px; background: var(--lime);
+  animation: rise 3.6s ease-in infinite;
+}
+.orbit {
+  width: 180px; height: 180px; border: 1px dashed rgba(142,224,200,.45);
+  animation: sweep 12s linear infinite;
+}
+.orbit::after, .seal {
+  content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--lime); top: -9px; left: calc(50% - 9px);
+}
+.seal {
+  width: 74px; height: 74px; display: grid; place-items: center;
+  color: var(--ink); font-weight: 600; animation: pop 700ms ease both;
+}
+@keyframes rise {
+  from { transform: translateY(40px) scale(.6); opacity: 0; }
+  30% { opacity: 1; }
+  to { transform: translateY(-220px) scale(1); opacity: 0; }
+}
+@keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.hit { border-left: 3px solid var(--clay); padding-left: 12px; margin: 12px 0; }
 @media (max-width: 800px) {
-  .layout, .why, .stats, .section-head, .brief form, footer { grid-template-columns: 1fr; display: grid; }
+  .layout, .why, .stats, .section-head, .brief form, .scan form, footer { grid-template-columns: 1fr; display: grid; }
   nav { display: none; }
 }

@@ -65,3 +65,58 @@ document.getElementById("brief-form").addEventListener("submit", async (event) =
   a.download = "lumenfield-brief.pdf";
   a.click();
 });
+
+const stage = document.getElementById("scan-stage");
+const result = document.getElementById("scan-result");
+fetch("/api/network").then(r => r.json()).then(net => {
+  document.getElementById("cidr").value = net.cidr;
+  document.getElementById("lan").textContent = net.private
+    ? `This host is ${net.host} on ${net.cidr}`
+    : "No private range detected. Enter a private CIDR you operate.";
+});
+
+document.getElementById("scan-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = Object.fromEntries(new FormData(event.target));
+  data.confirmed = true;
+  stage.hidden = false;
+  result.innerHTML = "";
+  const res = await fetch("/api/scan", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(data),
+  });
+  const body = await res.json();
+  stage.hidden = true;
+  if (!res.ok) {
+    result.innerHTML = `<p>${body.error || "Scan refused."}</p>`;
+    return;
+  }
+  result.innerHTML = body.clear ? clearField(body) : hitList(body);
+});
+
+function clearField(body) {
+  const motes = Array.from({length: 14}, (_, i) =>
+    `<span class="mote" style="left:${8 + i * 6}%; animation-delay:${(i % 5) * 0.35}s"></span>`
+  ).join("");
+  return `<div class="clear-field">
+    ${motes}
+    <div class="orbit"></div>
+    <div>
+      <div class="seal">LF</div>
+      <h3>Field is clear.</h3>
+      <p>No watched product was identified on ${body.cidr}. ${body.hosts_considered} hosts read, banners only.</p>
+      <p class="fine">A clear field is today's result. The board keeps learning, so run it again when the feed moves.</p>
+    </div>
+  </div>`;
+}
+
+function hitList(body) {
+  return `<p class="kicker">${body.findings.length} match${body.findings.length === 1 ? "" : "es"} on ${body.cidr}</p>` +
+    body.findings.map(hit => `<article class="hit">
+      <b>${hit.title}</b>
+      <p>${hit.host}:${hit.port} · ${hit.cve} · relevance ${hit.relevance}</p>
+      <p>${hit.client_line}</p>
+      <p class="fine">${hit.evidence}</p>
+    </article>`).join("");
+}

@@ -19,17 +19,34 @@
       </div>
     </div>
     <nav>
+      <a href="#scan">Scan</a>
       <a href="#board">Board</a>
-      <a href="#why">Why it evolves</a>
       <a href="#brief">Client brief</a>
     </nav>
   </header>
 
   <section class="hero">
     <p class="kicker">Client service · authorised assessment · {{ today }}</p>
-    <h1>Show the concern.<br />Leave the fix.</h1>
-    <p class="lede">A living board of exploited exposure classes. Each item carries its ongoing relevance, a plain-language line for the client, and a defensive check — never an attack script. New tests arrive from the public KEV feed and wait for an analyst.</p>
+    <h1>Scan the field.<br />Leave the fix.</h1>
+    <p class="lede">Lumenfield reads the connected private network, matches service names to exploited product classes, and tells you when one of them is exposed. A clear field gets the animation. A match gets the client line and the fix.</p>
     <div class="stats" id="stats"></div>
+  </section>
+
+  <section id="scan" class="scan">
+    <div class="section-head">
+      <h2>Connected network</h2>
+      <p id="lan" class="fine">Finding the local range…</p>
+    </div>
+    <form id="scan-form">
+      <label>Range to assess<input name="cidr" id="cidr" required /></label>
+      <label class="check"><input type="checkbox" name="confirmed" required /> I am authorised to assess this network</label>
+      <button type="submit" id="scan-btn">Scan for known exposure</button>
+    </form>
+    <div id="scan-stage" class="stage" hidden>
+      <div class="radar" aria-hidden="true"><i></i></div>
+      <p>Reading banners on the private range. No exploit traffic.</p>
+    </div>
+    <div id="scan-result"></div>
   </section>
 
   <section id="board" class="board">
