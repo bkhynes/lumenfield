@@ -147,7 +147,12 @@ label { display: grid; gap: 6px; font-size: .85rem; color: var(--mute); }
 @keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .hit { border-left: 3px solid var(--clay); padding-left: 12px; margin: 12px 0; }
 .hit button { background: transparent; color: var(--sand); padding: 0; font-weight: 600; }
-button:disabled { opacity: .55; cursor: wait; }
+.inventory { margin-top: 14px; }
+.inventory summary { cursor: pointer; color: var(--mint); }
+.inventory li { color: var(--mute); font-size: .85rem; }
+@media (prefers-reduced-motion: reduce) {
+  .radar i, .orbit, .mote, .seal { animation: none; }
+}
 @media (max-width: 800px) {
   .layout, .why, .stats, .section-head, .brief form, .scan form, footer { grid-template-columns: 1fr; display: grid; }
   nav { display: none; }

@@ -25,7 +25,7 @@ function paintList() {
     <li><button data-id="${f.id}" class="${f.id === current ? "on" : ""}">
       <span class="rel">${f.relevance}</span>
       <b>${f.title}</b>
-      <small>${f.cve} · ${f.klass}</small>
+      <small>${f.cve} · ${f.klass} · ${dueLabel(f.due)}</small>
     </button></li>`).join("") || "<li class='fine'>Nothing on the board matches that.</li>";
 }
 
@@ -136,6 +136,33 @@ document.getElementById("scan-form").addEventListener("submit", async (event) =>
   showScan(body);
 });
 
+function dueLabel(due) {
+  if (!due || due === "rolling") return "rolling";
+  const today = new Date().toISOString().slice(0, 10);
+  if (due < today) return "past due";
+  return `due ${due}`;
+}
+
+function unmatched(body) {
+  const matched = new Set((body.findings || []).map(hit => `${hit.host}:${hit.port}`));
+  return (body.observations || []).filter(obs => !matched.has(`${obs.host}:${obs.port}`));
+}
+
+function deltaLine(body) {
+  const delta = body.delta;
+  if (!delta || !delta.compared_with) return "First saved scan on this service.";
+  if (!delta.new.length && !delta.cleared.length) return `Unchanged since ${delta.compared_with}.`;
+  return `${delta.new.length} new, ${delta.cleared.length} cleared since ${delta.compared_with}.`;
+}
+
+function inventory(body) {
+  const rows = unmatched(body);
+  if (!rows.length) return "";
+  return `<details class="inventory"><summary>${rows.length} other services answered, not on the board</summary>
+    <ul>${rows.map(obs => `<li>${obs.host}:${obs.port} — ${obs.evidence}</li>`).join("")}</ul>
+  </details>`;
+}
+
 function showScan(body) {
   last = body;
   result.innerHTML = body.clear ? clearField(body) : hitList(body);
@@ -154,9 +181,9 @@ function clearField(body) {
       <div class="seal">LF</div>
       <h3>Field is clear.</h3>
       <p>No watched product on ${body.cidr}. ${body.hosts_considered} hosts, ${seen} services answered, none matched the board.</p>
-      <p class="fine">Saved ${body.scanned_at}. Open services that are not on the board still need an owner.</p>
+      <p class="fine">${deltaLine(body)} Saved ${body.scanned_at}.</p>
     </div>
-  </div>`;
+  </div>${inventory(body)}`;
 }
 
 function hitList(body) {
@@ -167,7 +194,7 @@ function hitList(body) {
       <p>${hit.client_line}</p>
       <p class="fine">${hit.evidence}</p>
     </article>`).join("") +
-    `<p class="fine">${body.observations.length} services answered. Open a match to brief it.</p>`;
+    `<p class="fine">${deltaLine(body)} Open a match to brief it.</p>${inventory(body)}`;
 }
 
 result.addEventListener("click", (event) => {

@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent
 APP = Flask(__name__, template_folder=str(ROOT / "templates"), static_folder=str(ROOT / "static"))
 WATCH = ROOT / "data" / "watchlist.json"
 LAST = ROOT / "data" / "last_scan.json"
+HISTORY = ROOT / "data" / "scan_history.json"
 
 
 def load_watch() -> dict:
@@ -68,6 +69,42 @@ def network():
     return jsonify(local_network())
 
 
+def load_history() -> list:
+    if not HISTORY.exists():
+        return []
+    return json.loads(HISTORY.read_text())
+
+
+def remember(result: dict) -> dict:
+    previous = load_history()[:1]
+    prior_keys = {f"{hit['host']}:{hit['port']}:{hit['id']}" for hit in (previous[0].get("findings") or [])} if previous else set()
+    keys = {f"{hit['host']}:{hit['port']}:{hit['id']}" for hit in result.get("findings", [])}
+    result["delta"] = {
+        "new": sorted(keys - prior_keys),
+        "cleared": sorted(prior_keys - keys),
+        "compared_with": previous[0].get("scanned_at") if previous else None,
+    }
+    receipt = {
+        "scanned_at": result.get("scanned_at"),
+        "cidr": result.get("cidr"),
+        "clear": result.get("clear"),
+        "hosts_considered": result.get("hosts_considered"),
+        "services": len(result.get("observations") or []),
+        "matches": len(result.get("findings") or []),
+        "findings": result.get("findings") or [],
+    }
+    history = [receipt, *load_history()][:8]
+    HISTORY.parent.mkdir(exist_ok=True)
+    HISTORY.write_text(json.dumps(history, indent=2))
+    LAST.write_text(json.dumps(result, indent=2))
+    return result
+
+
+@APP.route("/api/history")
+def history():
+    return jsonify(load_history())
+
+
 def last_scan() -> dict | None:
     if not LAST.exists():
         return None
@@ -88,8 +125,7 @@ def run_scan():
     except PermissionError as exc:
         return jsonify({"error": str(exc)}), 403
     LAST.parent.mkdir(exist_ok=True)
-    LAST.write_text(json.dumps(result, indent=2))
-    return jsonify(result)
+    return jsonify(remember(result))
 
 
 @APP.route("/api/intake", methods=["POST"])
