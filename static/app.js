@@ -119,6 +119,8 @@ function paintDevices(body) {
 fetch("/api/devices").then(r => r.json()).then(paintDevices);
 fetch("/api/network").then(r => r.json()).then(net => {
   document.getElementById("cidr").value = net.cidr;
+  const pill = document.getElementById("net-pill");
+  if (pill) pill.textContent = net.cidr;
   document.getElementById("lan").textContent = net.private
     ? `This host is ${net.host} on ${net.cidr}. Up to 128 hosts, seven service ports.`
     : "No private range detected. Enter a private CIDR you operate.";
@@ -225,6 +227,16 @@ function hitList(body) {
     `<p class="fine">${deltaLine(body)} Open a match to brief it.</p>${inventory(body)}${nseBlock(body)}`;
 }
 
+document.querySelectorAll(".tabbar button").forEach(button => {
+  button.addEventListener("click", () => showTab(button.dataset.tab));
+});
+
+function showTab(id) {
+  document.querySelectorAll(".panel").forEach(panel => panel.classList.toggle("on", panel.id === id));
+  document.querySelectorAll(".tabbar button").forEach(item => item.classList.toggle("on", item.dataset.tab === id));
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
 result.addEventListener("click", (event) => {
   const btn = event.target.closest("[data-open]");
   if (!btn) return;
@@ -233,5 +245,5 @@ result.addEventListener("click", (event) => {
   document.getElementById("filter").value = "";
   paintList();
   paintDetail();
-  document.getElementById("board").scrollIntoView({behavior: "smooth"});
+  showTab("board");
 });

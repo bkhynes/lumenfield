@@ -2,108 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lumenfield — adaptive exposure intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#10211c" />
+  <title>Lumenfield</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,640&family=Outfit:wght@340;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/app.css" />
 </head>
 <body>
-  <div class="glow"></div>
   <header class="top">
     <div class="brand">
       <span class="mark">LF</span>
       <div>
         <strong>Lumenfield</strong>
-        <em>Adaptive exposure intelligence</em>
+        <em id="today">{{ today }}</em>
       </div>
     </div>
-    <nav>
-      <a href="#scan">Scan</a>
-      <a href="#board">Board</a>
-      <a href="#brief">Client brief</a>
-    </nav>
+    <span class="pill" id="net-pill">Private range</span>
   </header>
 
-  <section class="hero">
-    <p class="kicker">Client service · authorised assessment · {{ today }}</p>
-    <h1>Scan the field.<br />Leave the fix.</h1>
-    <p class="lede">Lumenfield reads the connected private network, matches service names to exploited product classes, and tells you when one of them is exposed. A clear field gets the animation. A match gets the client line and the fix.</p>
-    <div class="stats" id="stats"></div>
-    <section id="devices" class="devices">
+  <main>
+    <section id="scan" class="panel on">
+      <p class="kicker">Authorised assessment</p>
+      <h1>Scan the field.</h1>
+      <p class="lede">Match answered services to watched products. A clear field is today's result, not a finished network.</p>
+      <div class="stats" id="stats"></div>
+      <form id="scan-form" class="card">
+        <label>Range<input name="cidr" id="cidr" required inputmode="decimal" /></label>
+        <p id="lan" class="fine">Finding the local range…</p>
+        <label class="check"><input type="checkbox" name="confirmed" required /> I am authorised to assess this network</label>
+        <button type="submit" id="scan-btn">Scan for known exposure</button>
+        <p id="scope" class="fine">Banners, certificate names, then a safe-only script pass. No exploit traffic.</p>
+      </form>
+      <div id="scan-stage" class="stage" hidden>
+        <div class="radar" aria-hidden="true"><i></i></div>
+        <p>Reading banners on the private range.</p>
+      </div>
+      <div id="scan-result"></div>
+    </section>
+
+    <section id="devices" class="panel">
       <div class="section-head">
-        <h2>Connected devices</h2>
+        <h2>Devices</h2>
         <p id="device-count" class="fine">Waiting for MySQL…</p>
       </div>
       <div id="device-list" class="device-list"></div>
     </section>
-  </section>
 
-  <section id="scan" class="scan">
-    <div class="section-head">
-      <h2>Connected network</h2>
-      <p id="lan" class="fine">Finding the local range…</p>
-    </div>
-    <p id="scope" class="fine">Banners and certificate names only. Private ranges. A clear result means none of the watched products were identified, not that every host is patched.</p>
-    <form id="scan-form">
-      <label>Range to assess<input name="cidr" id="cidr" required /></label>
-      <label class="check"><input type="checkbox" name="confirmed" required /> I am authorised to assess this network</label>
-      <button type="submit" id="scan-btn">Scan for known exposure</button>
-    </form>
-    <div id="scan-stage" class="stage" hidden>
-      <div class="radar" aria-hidden="true"><i></i></div>
-      <p>Reading banners on the private range. No exploit traffic.</p>
-    </div>
-    <div id="scan-result"></div>
-  </section>
+    <section id="board" class="panel">
+      <div class="section-head">
+        <h2>Board</h2>
+      </div>
+      <div class="filters">
+        <label>Voice
+          <select id="voice">
+            <option value="client">Client</option>
+            <option value="technical">Technical</option>
+          </select>
+        </label>
+        <label>Find<input id="filter" placeholder="Vendor, CVE, product" /></label>
+      </div>
+      <div class="layout">
+        <ul class="list" id="list"></ul>
+        <article class="detail" id="detail"></article>
+      </div>
+    </section>
 
-  <section id="board" class="board">
-    <div class="section-head">
-      <h2>Exposure board</h2>
-      <label>Voice
-        <select id="voice">
-          <option value="client">Client</option>
-          <option value="technical">Technical</option>
-        </select>
-      </label>
-      <label>Find on the board<input id="filter" placeholder="Vendor, CVE, product" /></label>
-    </div>
-    <div class="layout">
-      <ul class="list" id="list"></ul>
-      <article class="detail" id="detail"></article>
-    </div>
-  </section>
+    <section id="brief" class="panel">
+      <h2>Brief</h2>
+      <p class="lede">The PDF is what the client keeps.</p>
+      <form id="brief-form" class="card">
+        <label>Client<input name="client" value="Northwind Partners" required /></label>
+        <label>Prepared by<input name="prepared" value="Lumenfield · Swift Programming" required /></label>
+        <label class="check"><input type="checkbox" name="include_scan" checked /> Include the latest scan</label>
+        <label class="check"><input type="checkbox" name="matches_only" /> Only matched items</label>
+        <button type="submit">Download PDF</button>
+      </form>
+      <section class="why">
+        <h2>Why the test has to move</h2>
+        <p>A one-off scan is a photograph. New exploited bugs land every week. Lumenfield keeps the board, scores relevance, and files the fix.</p>
+      </section>
+    </section>
+  </main>
 
-  <section id="why" class="why">
-    <div>
-      <p class="kicker">The argument in the leave-behind</p>
-      <h2>A test that cannot learn is a photograph.</h2>
-      <p>Edge managers, mail gateways, VPNs, and support portals are re-exposed every patch cycle. CISA’s Known Exploited Vulnerabilities catalog is the public queue. Lumenfield matches new rows to tagged assets, opens an analyst task, and only then prints the item. Relevance stays high until a fixed build is attested on every node.</p>
-    </div>
-    <ol>
-      <li><b>Ingest.</b> Weekly read of the public KEV JSON. Metadata only.</li>
-      <li><b>Match.</b> Vendor and role tags on the client estate.</li>
-      <li><b>Confirm.</b> An analyst writes the client line and attaches a defensive check.</li>
-      <li><b>Brief.</b> Visual PDF with concern, relevance, and the fix.</li>
-    </ol>
-  </section>
-
-  <section id="brief" class="brief">
-    <h2>Print the brief</h2>
-    <form id="brief-form">
-      <label>Client<input name="client" value="Northwind Partners" required /></label>
-      <label>Prepared by<input name="prepared" value="Lumenfield · Swift Programming" required /></label>
-      <label class="check"><input type="checkbox" name="include_scan" checked /> Include the latest scan on the cover</label>
-      <label class="check"><input type="checkbox" name="matches_only" /> Only items matched on that scan</label>
-      <button type="submit">Download visual PDF</button>
-    </form>
-    <p class="fine">The PDF is the artifact clients keep. It argues for a living test programme and lists only authorised remediation.</p>
-  </section>
-
-  <footer>
-    <span>Lumenfield</span>
-    <span>Authorised use only · no exploit payloads</span>
-  </footer>
+  <nav class="tabbar" aria-label="Sections">
+    <button type="button" data-tab="scan" class="on">Scan</button>
+    <button type="button" data-tab="devices">Devices</button>
+    <button type="button" data-tab="board">Board</button>
+    <button type="button" data-tab="brief">Brief</button>
+  </nav>
   <script id="catalog" type="application/json">{{ findings | tojson }}</script>
   <script src="/static/app.js"></script>
 </body>
