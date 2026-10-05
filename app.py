@@ -20,6 +20,7 @@ from scanner import local_network, scan
 ROOT = Path(__file__).resolve().parent
 APP = Flask(__name__, template_folder=str(ROOT / "templates"), static_folder=str(ROOT / "static"))
 WATCH = ROOT / "data" / "watchlist.json"
+LAST = ROOT / "data" / "last_scan.json"
 
 
 def load_watch() -> dict:
@@ -71,9 +72,12 @@ def run_scan():
     body = request.get_json(silent=True) or {}
     cidr = (body.get("cidr") or local_network()["cidr"]).strip()
     try:
-        return jsonify(scan(cidr, confirmed=bool(body.get("confirmed"))))
+        result = scan(cidr, confirmed=bool(body.get("confirmed")))
     except PermissionError as exc:
         return jsonify({"error": str(exc)}), 403
+    LAST.parent.mkdir(exist_ok=True)
+    LAST.write_text(json.dumps(result, indent=2))
+    return jsonify(result)
 
 
 @APP.route("/api/intake", methods=["POST"])

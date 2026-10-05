@@ -102,11 +102,12 @@ function clearField(body) {
   return `<div class="clear-field">
     ${motes}
     <div class="orbit"></div>
+    <div class="orbit inner"></div>
     <div>
       <div class="seal">LF</div>
       <h3>Field is clear.</h3>
       <p>No watched product was identified on ${body.cidr}. ${body.hosts_considered} hosts read, banners only.</p>
-      <p class="fine">A clear field is today's result. The board keeps learning, so run it again when the feed moves.</p>
+      <p class="fine">Saved ${body.scanned_at}. A clear field is today's result — run it again when the feed moves.</p>
     </div>
   </div>`;
 }

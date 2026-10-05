@@ -130,10 +130,7 @@ label { display: grid; gap: 6px; font-size: .85rem; color: var(--mute); }
   width: 8px; height: 8px; background: var(--lime);
   animation: rise 3.6s ease-in infinite;
 }
-.orbit {
-  width: 180px; height: 180px; border: 1px dashed rgba(142,224,200,.45);
-  animation: sweep 12s linear infinite;
-}
+.orbit.inner { width: 120px; height: 120px; animation-duration: 7s; animation-direction: reverse; }
 .orbit::after, .seal {
   content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%;
   background: var(--lime); top: -9px; left: calc(50% - 9px);
