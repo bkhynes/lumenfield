@@ -234,3 +234,8 @@ def _role(evidence: str) -> str | None:
         if needle in text:
             return role
     return None
+
+
+if __name__ == "__main__":
+    ensure_schema()
+    print(summary())
