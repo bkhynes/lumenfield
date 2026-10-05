@@ -37,6 +37,7 @@
       <h2>Connected network</h2>
       <p id="lan" class="fine">Finding the local range…</p>
     </div>
+    <p id="scope" class="fine">Banners and certificate names only. Private ranges. A clear result means none of the watched products were identified, not that every host is patched.</p>
     <form id="scan-form">
       <label>Range to assess<input name="cidr" id="cidr" required /></label>
       <label class="check"><input type="checkbox" name="confirmed" required /> I am authorised to assess this network</label>
@@ -58,6 +59,7 @@
           <option value="technical">Technical</option>
         </select>
       </label>
+      <label>Find on the board<input id="filter" placeholder="Vendor, CVE, product" /></label>
     </div>
     <div class="layout">
       <ul class="list" id="list"></ul>
@@ -84,6 +86,8 @@
     <form id="brief-form">
       <label>Client<input name="client" value="Northwind Partners" required /></label>
       <label>Prepared by<input name="prepared" value="Lumenfield · Swift Programming" required /></label>
+      <label class="check"><input type="checkbox" name="include_scan" checked /> Include the latest scan on the cover</label>
+      <label class="check"><input type="checkbox" name="matches_only" /> Only items matched on that scan</label>
       <button type="submit">Download visual PDF</button>
     </form>
     <p class="fine">The PDF is the artifact clients keep. It argues for a living test programme and lists only authorised remediation.</p>

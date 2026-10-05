@@ -56,15 +56,27 @@ def report():
     chosen = [item for item in CATALOG if item["id"] in selected]
     if not chosen:
         chosen = CATALOG
+    scan_note = last_scan() if body.get("include_scan") else None
     out = ROOT / "briefs" / f"{date.today().isoformat()}-lumenfield-brief.pdf"
     out.parent.mkdir(exist_ok=True)
-    build_brief(out, client=client, prepared=prepared, findings=chosen)
+    build_brief(out, client=client, prepared=prepared, findings=chosen, scan=scan_note)
     return send_file(out, as_attachment=True, download_name=out.name)
 
 
 @APP.route("/api/network")
 def network():
     return jsonify(local_network())
+
+
+def last_scan() -> dict | None:
+    if not LAST.exists():
+        return None
+    return json.loads(LAST.read_text())
+
+
+@APP.route("/api/scan", methods=["GET"])
+def saved_scan():
+    return jsonify(last_scan() or {})
 
 
 @APP.route("/api/scan", methods=["POST"])
